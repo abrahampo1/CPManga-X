@@ -4,6 +4,7 @@
   "version": "1.0.1",
   "description": "CPManga, the way you read on your kindle",
   "main": "src/index.js",
+  "repository": "https://github.com/Abrahampo1/cpmanga-x",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
