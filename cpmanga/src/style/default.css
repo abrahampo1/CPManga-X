@@ -59,12 +59,13 @@ nav {
     width: 140px;
     height: 200px;
     border-radius: 5px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
 
 .bcard {
     text-align: center;
-    width: 220px;
+    width: calc(20% - 20px);
     box-sizing: border-box;
     padding: 10px;
     border-radius: 5px;
@@ -126,6 +127,7 @@ nav {
     padding: 10px;
     background: rgb(233, 59, 59);
     background: linear-gradient(135deg, rgba(233, 59, 59, 1) 0%, rgba(232, 134, 134, 1) 100%);
+    z-index: 100;
 }
 
 #kindle p {

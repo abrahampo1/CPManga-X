@@ -17,6 +17,9 @@
     "name": "Abraham Leiro Fernandez",
     "email": "abraham@cpsoftware.es"
   },
+  "publishConfig": {
+    
+  },
   "license": "MIT",
   "dependencies": {
     "axios": "^1.2.1",
