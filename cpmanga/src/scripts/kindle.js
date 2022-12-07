@@ -30,9 +30,15 @@ async function detect_kindle() {
     }, 5000);
   }
 }
-detect_kindle();
-setInterval(() => {
+var autokindle = localStorage.getItem("detect-kindle");
+if (autokindle == "true") {
   detect_kindle();
+}
+setInterval(() => {
+  var autokindle = localStorage.getItem("detect-kindle");
+  if (autokindle == "true") {
+    detect_kindle();
+  }
 }, 10000);
 
 function read_kindle() {

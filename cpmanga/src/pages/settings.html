@@ -1,12 +1,28 @@
-<div class="p10">
-  <h2>Mangadex Languaje</h2>
-  <select
-    name=""
-    id=""
-    onchange="localStorage.setItem('mangadex-languaje', this.value)"
-  >
-    <option value='["en"]'>English</option>
-    <option value='["es"]'>Español</option>
-    <option value='["es-la"]'>Español Latam</option>
-  </select>
+<div class="p10 fcenter">
+  <div style="width: 60%;">
+    <h2>Mangadex Settings</h2>
+    <div class="scard">
+      <h4>Manga Languaje</h4>
+      <select name="" id="langset" onchange="localStorage.setItem('mangadex-languaje', this.value)">
+        <option value='["en"]'>English</option>
+        <option value='["es"]'>Español</option>
+        <option value='["es-la"]'>Español Latam</option>
+      </select>
+    </div>
+    <h2>CPManga Settings</h2>
+    <div class="scard">
+      <h4>Autodetect Amazon Kindle</h4>
+      <input type="checkbox" name="" id="autokindle" onchange="localStorage.setItem('detect-kindle', this.checked)">
+    </div>
+  </div>
+
 </div>
+
+<script>
+  var leng = localStorage.getItem('mangadex-languaje')
+  $(`#langset option[value='${leng}']`).prop('selected', true)
+
+  var autokindle = localStorage.getItem('detect-kindle')
+  console.log(autokindle)
+  $('#autokindle').prop('checked', autokindle=='true')
+</script>

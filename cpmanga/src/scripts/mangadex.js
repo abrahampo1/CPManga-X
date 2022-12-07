@@ -1,5 +1,5 @@
 const MFA = require("mangadex-full-api");
-
+const fastFolderSizeSync = require("fast-folder-size/sync");
 const mfa_user = localStorage.getItem("mangadex-user");
 const mfa_pass = localStorage.getItem("mangadex-password");
 
@@ -35,15 +35,16 @@ function load_carrousel() {
   let languaje = JSON.parse(localStorage.getItem("mangadex-languaje")) || [
     "en",
   ];
-  MFA.Manga.search({ limit: 3, availableTranslatedLanguage: languaje }).then((r) => {
-    $(".carrousel").html("");
-    r.forEach(async (manga) => {
-      let covers = await manga.getCovers();
-      let author = await MFA.Author.get(manga.authors[0].id);
-      var randomColor1 = Math.floor(Math.random() * 16777215).toString(16);
-      var randomColor2 = Math.floor(Math.random() * 16777215).toString(16);
-      $(".carrousel").append(
-        `
+  MFA.Manga.search({ limit: 3, availableTranslatedLanguage: languaje }).then(
+    (r) => {
+      $(".carrousel").html("");
+      r.forEach(async (manga) => {
+        let covers = await manga.getCovers();
+        let author = await MFA.Author.get(manga.authors[0].id);
+        var randomColor1 = Math.floor(Math.random() * 16777215).toString(16);
+        var randomColor2 = Math.floor(Math.random() * 16777215).toString(16);
+        $(".carrousel").append(
+          `
           <div class="gcard" onclick="load_manga('${manga.id}')" style="background: linear-gradient(312deg, #${randomColor1} 0%, #${randomColor2} 100%);">
             <div class="flex">
               <img
@@ -57,12 +58,13 @@ function load_carrousel() {
             </div>
           </div>
           `
-      );
-      let scrollElement = document.querySelector(".carrousel");
-      scrollElement.scrollLeft =
-        (scrollElement.scrollWidth - scrollElement.clientWidth) / 2;
-    });
-  });
+        );
+        let scrollElement = document.querySelector(".carrousel");
+        scrollElement.scrollLeft =
+          (scrollElement.scrollWidth - scrollElement.clientWidth) / 2;
+      });
+    }
+  );
 }
 
 function search_manga(query) {
@@ -97,7 +99,7 @@ function search_manga(query) {
 }
 let curr_manga;
 
-function load_manga(id) {
+async function load_manga(id) {
   $("#loading").show();
   $(".library").load("pages/manga.html", async () => {
     $("#fav").on("click", () => {
@@ -148,48 +150,105 @@ function load_manga(id) {
     $(".chapters").html("");
 
     $(".mangaInfo h3").text(manga.localizedTitle.localString);
-    chapters.forEach(async (chapter) => {
+    console.log(chapters);
+    let manga_resume = {};
+    for (let index = 0; index < chapters.length; index++) {
+      const chapter = chapters[index];
       let cl = "";
       let group = "";
       if (chapter.groups[0]) {
         console.log();
         group = await chapter.groups[0].resolve();
-        group = group.name;
+        chapter.groupname = group.name;
       }
 
-      let icon = `
-      
-      <iconify-icon onclick="group_add('${manga.id}', '${chapter.id}', ${chapter.chapter}, this)" class="gicon"
-        icon="material-symbols:check-box-outline-blank"
-      ></iconify-icon>
-      
-      <iconify-icon id="download" onclick="download_chapter('${manga.id}', '${chapter.id}', this.parentNode.parentNode)"
-      icon="material-symbols:download-sharp"
-    ></iconify-icon>`;
-
-      let downloaded = JSON.parse(localStorage.getItem("downloaded")) || {};
-      if (downloaded[manga.id] && downloaded[manga.id][chapter.id]) {
-        icon += `
-        <iconify-icon class="download_complete"
-        icon="ic:outline-download-done"
-      ></iconify-icon>`;
-        cl = "downloaded";
+      if (!manga_resume[chapter.chapter]) {
+        manga_resume[chapter.chapter] = [];
       }
-      $(".chapters").append(`
-      
+
+      manga_resume[chapter.chapter].push(chapter);
+    }
+    console.log(manga_resume);
+
+    Object.entries(manga_resume).forEach(async ([key, value]) => {
+      let chapter_holder = $(
+        `<div class="chapterHolder"><h4>Chapter ${key}</h4></div>`
+      );
+
+      for (let index = 0; index < value.length; index++) {
+        const chapter = value[index];
+        let downloaded = JSON.parse(localStorage.getItem("downloaded")) || {};
+        let cl = "";
+        let size = "";
+        let kindle_icon = "";
+        if (downloaded[manga.id] && downloaded[manga.id][chapter.id]) {
+          cl = "downloaded";
+          let home = require("os").homedir();
+          let manga_path =
+            home + "/Documents/cpmanga/manga/" + manga.id + "/" + chapter.id;
+          size = fastFolderSizeSync(manga_path);
+          size = `<div class="size">${(size / 1000 / 1000).toFixed(
+            2
+          )} MB</div>`;
+
+          kindle_icon = `
+          
+          <iconify-icon icon="mdi:file-send-outline"></iconify-icon>
+          
+          `;
+        }
+        $(chapter_holder).append(`
         <div class="chapter ${cl}">
-        <div class="progress"></div>
-      <div class="flex">
-        <div class="num">${chapter.chapter}</div>
-        <div class="title">${chapter.title} <span class="secondary">${group}</span></div>
+           <div class="progress"></div>
+         <div class="flex">
+           <div class="num">${chapter.chapter}</div>
+           <div class="title">${chapter.title} <span class="secondary">${chapter.groupname}</span></div>
+         </div>
+         <div class="flex">
+         ${size}
+         <iconify-icon onclick="group_add('${manga.id}', '${chapter.id}', ${chapter.chapter}, this)" class="gicon"
+           icon="material-symbols:check-box-outline-blank"
+         ></iconify-icon>
+         <iconify-icon id="download" onclick="download_chapter('${manga.id}', '${chapter.id}', this.parentNode.parentNode)"
+         icon="material-symbols:download-sharp"
+       ></iconify-icon>
+       ${kindle_icon}
+
+         </div>
       </div>
-      <div class="flex">
-      ${icon}
-      </div>
-      
-    </div>
-        
         `);
+      }
+
+      $(".chapters").append(chapter_holder);
+    });
+    chapters.forEach(async (chapter) => {
+      //   let icon = `
+      //   <iconify-icon onclick="group_add('${manga.id}', '${chapter.id}', ${chapter.chapter}, this)" class="gicon"
+      //     icon="material-symbols:check-box-outline-blank"
+      //   ></iconify-icon>
+      //   <iconify-icon id="download" onclick="download_chapter('${manga.id}', '${chapter.id}', this.parentNode.parentNode)"
+      //   icon="material-symbols:download-sharp"
+      // ></iconify-icon>`;
+      //   let downloaded = JSON.parse(localStorage.getItem("downloaded")) || {};
+      //   if (downloaded[manga.id] && downloaded[manga.id][chapter.id]) {
+      //     icon += `
+      //     <iconify-icon class="download_complete"
+      //     icon="ic:outline-download-done"
+      //   ></iconify-icon>`;
+      //     cl = "downloaded";
+      //   }
+      //   $(".chapters").append(`
+      //     <div class="chapter ${cl}">
+      //     <div class="progress"></div>
+      //   <div class="flex">
+      //     <div class="num">${chapter.chapter}</div>
+      //     <div class="title">${chapter.title} <span class="secondary">${group}</span></div>
+      //   </div>
+      //   <div class="flex">
+      //   ${icon}
+      //   </div>
+      // </div>
+      //     `);
     });
     $("#loading").fadeOut();
   });

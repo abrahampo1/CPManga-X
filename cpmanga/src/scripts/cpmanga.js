@@ -13,9 +13,18 @@ async function download_chapter(
   alt_title,
   custom_page = 0,
   custom_chapter = false,
-  execute_command = true,
+  execute_command = false,
   custom_number = false
 ) {
+  //Search if kindle is connected
+  let kindle_path = await search_kindle();
+
+  //To-do download without kindle, meanwhile give an alert message
+  if (!kindle_path) {
+    alert("Please connect the kindle to auto pass the generated file");
+    //return false;
+  }
+
   //Verify that the chapter is on query
   if (download_query[chapter]) {
     return false;
@@ -57,20 +66,15 @@ async function download_chapter(
   alt_title = manga.localizedTitle.localString;
   folder(manga_path);
 
-  //Search if kindle is connected
-  let kindle_path = await search_kindle();
-
-  //To-do download without kindle, meanwhile give an alert message
-  if (!kindle_path) {
-    alert("Please connect the kindle to begin download");
-    return false;
-  }
-
   //Iterate and download the chapter pages
   let pages = await chapter.getReadablePages();
   for (let index = 0; index < pages.length; index++) {
     const file_name = manga_path + "/" + (index + custom_page) + ".png";
-    await downloadImage(pages[index], file_name, chapter.id);
+
+    //Check if image already exist, if not, download it (this will make the downloads really faster with cached images)
+    if (!fs.existsSync(file_name)) {
+      await downloadImage(pages[index], file_name, chapter.id);
+    }
 
     //Set progress bar progress
     let percent = ((index + 1) / pages.length) * 100;
@@ -117,31 +121,26 @@ async function download_chapter(
   // what to do when the command is done
   kcc.on("exit", function (code) {
     progress.style.width = "50%";
-
-    folder(path.join(kindle_path, "/documents/cpmanga/" + manga.id));
-    progress.style.width = "70%";
-
-    setTimeout(() => {
-      progress.style.width = "90%";
-
-      fs.copyFile(
+    if (kindle_path) {
+      folder(path.join(kindle_path, "/documents/cpmanga/" + manga.id));
+      fs.copyFileSync(
         manga_path + ".mobi",
         path.join(
           kindle_path,
           "/documents/cpmanga/" + manga.id + `/${chapternumber}.mobi`
-        ),
-        (r) => {
-          progress.style.width = "100%";
-
-          fs.rm(manga_path + ".mobi", { recursive: true, force: true }, () => {
-            console.log("All done!");
-            holder.classList.add("downloaded");
-            $(icon).attr("icon", "ic:outline-download-done");
-            $(progress).fadeOut("fast");
-          });
-        }
+        )
       );
-    }, 2000);
+      progress.style.width = "70%";
+      fs.rmSync(manga_path + ".mobi", { recursive: true, force: true });
+    }
+
+    progress.style.width = "100%";
+    console.log("All done!");
+    holder.classList.add("downloaded");
+    $(icon).attr("icon", "ic:outline-download-done");
+    $(progress).fadeOut("fast");
+    $(gicon).show();
+    $(dicon).show();
   });
 }
 
