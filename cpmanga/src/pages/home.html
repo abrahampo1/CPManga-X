@@ -1,0 +1,42 @@
+<div class="p10">
+  <h1>For You</h1>
+</div>
+<div class="carrousel">
+  <div class="gcard">
+    <div class="flex">
+      <img src="https://m.media-amazon.com/images/I/81zijlool9L.jpg" alt="" />
+      <div class="data">
+        <h1>Chainsaw Man</h1>
+        <p>by Tatsuki Fujimoto</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="p10">
+  <h1>Your Library</h1>
+  <div class="ylb"></div>
+</div>
+
+<div style="text-align: center">
+  <p>CPManga by @abrahampo1</p>
+  <a href="#" onclick="$('.library').load('pages/credits.html')">Credits</a>
+</div>
+
+<script>
+  load_carrousel();
+
+  let liked = JSON.parse(localStorage.getItem("liked")) || {};
+  console.log(liked);
+  Object.entries(liked).forEach(([key, value]) => {
+    $(".ylb").append(`
+    
+    <div class="bcard" onclick="load_manga('${value.id}')">
+    <img src="${value.cover}" alt="" />
+    <div class="bdata">
+      <h4>${value.localizedTitle[value.localizedTitle.availableLocales[0]]}</h4>
+    </div>
+  </div>
+    
+    `);
+  });
+</script>
