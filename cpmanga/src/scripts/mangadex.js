@@ -1,5 +1,6 @@
 const MFA = require("mangadex-full-api");
 const fastFolderSizeSync = require("fast-folder-size/sync");
+const { fstat } = require("fs");
 const mfa_user = localStorage.getItem("mangadex-user");
 const mfa_pass = localStorage.getItem("mangadex-password");
 
@@ -115,7 +116,7 @@ async function load_manga(id) {
         $("#fav iconify-icon").attr("icon", "ic:outline-star");
       }
     });
-    let manga = await MFA.Manga.get(id);
+    let manga = await MFA.Manga.get(id, true);
     let cover = await manga.getCovers();
     curr_manga = manga;
     let languaje = JSON.parse(localStorage.getItem("mangadex-languaje")) || [
@@ -150,6 +151,9 @@ async function load_manga(id) {
     $(".chapters").html("");
 
     $(".mangaInfo h3").text(manga.localizedTitle.localString);
+    let author = await manga.authors[0].resolve();
+    console.log(author);
+    $(".mangaInfo p").text(author.name);
     console.log(chapters);
     let manga_resume = {};
     for (let index = 0; index < chapters.length; index++) {
@@ -186,10 +190,12 @@ async function load_manga(id) {
           let home = require("os").homedir();
           let manga_path =
             home + "/Documents/cpmanga/manga/" + manga.id + "/" + chapter.id;
-          size = fastFolderSizeSync(manga_path);
-          size = `<div class="size">${(size / 1000 / 1000).toFixed(
-            2
-          )} MB</div>`;
+          if (fs.existsSync(manga_path)) {
+            size = fastFolderSizeSync(manga_path);
+            size = `<div class="size">${(size / 1000 / 1000).toFixed(
+              2
+            )} MB</div>`;
+          }
 
           kindle_icon = `
           

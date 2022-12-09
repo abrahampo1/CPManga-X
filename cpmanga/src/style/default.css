@@ -1,413 +1,403 @@
 * {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+        Arial, sans-serif;
 }
 
 *::-webkit-scrollbar {
-  width: 0 !important;
+    width: 0 !important;
 }
 
 html,
 body {
-  margin: 0px;
+    margin: 0px;
 }
 
 .library {
-  box-sizing: border-box;
-  padding-top: 50px;
+    box-sizing: border-box;
+    padding-top: 50px;
 }
 
 .carrousel {
-  display: flex;
-  justify-content: flex-start;
-  width: 100%;
-  overflow-x: scroll;
-  box-sizing: border-box;
-  flex-wrap: nowrap;
-  flex-direction: row;
-  height: 257px;
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    overflow-x: scroll;
+    box-sizing: border-box;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    height: 257px;
 }
 
 nav {
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-right: 10px;
-  padding-left: 10px;
-  position: fixed;
-  width: 100%;
-  background-color: white;
-  box-sizing: border-box;
-  z-index: 101;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 10px;
+    padding-left: 10px;
+    position: fixed;
+    width: 100%;
+    background-color: white;
+    box-sizing: border-box;
+    z-index: 101;
 }
 
 .gcard {
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  overflow: hidden;
-  border-radius: 10px;
-  min-width: 500px;
-  box-sizing: border-box;
-  padding: 20px;
-  margin-left: 10px;
-  margin-right: 10px;
-  background: rgb(233, 187, 59);
-  background: linear-gradient(
-    312deg,
-    rgba(233, 187, 59, 1) 0%,
-    rgba(232, 206, 134, 1) 100%
-  );
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    overflow: hidden;
+    border-radius: 10px;
+    min-width: 500px;
+    box-sizing: border-box;
+    padding: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+    background: rgb(233, 187, 59);
+    background: linear-gradient(312deg,
+            rgba(233, 187, 59, 1) 0%,
+            rgba(232, 206, 134, 1) 100%);
 }
 
 .gcard img,
 .bcard img {
-  width: 140px;
-  height: 200px;
-  border-radius: 5px;
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    width: 140px;
+    height: 200px;
+    border-radius: 5px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
 .bcard {
-  text-align: center;
-  width: calc(20% - 20px);
-  box-sizing: border-box;
-  padding: 10px;
-  border-radius: 5px;
-  margin: 10px;
-  overflow: hidden;
-  text-overflow: clip;
+    text-align: center;
+    width: calc(20% - 20px);
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px;
+    overflow: hidden;
+    text-overflow: clip;
 }
 
 .flex {
-  display: flex;
+    display: flex;
 }
 
 .data * {
-  text-shadow: 0px 0px 11px rgba(0, 0, 0, 0.36);
-  color: white;
-  padding-left: 10px;
+    text-shadow: 0px 0px 11px rgba(0, 0, 0, 0.36);
+    color: white;
+    padding-left: 10px;
 }
 
 .search {
-  position: relative;
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
-    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
-  overflow: hidden;
-  border-radius: 20px;
-  margin: 10px;
+    position: relative;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+        rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    overflow: hidden;
+    border-radius: 20px;
+    margin: 10px;
 }
 
 select {
-  border: none;
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
-    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
-  font-size: 20px;
-  padding: 10px;
-  box-sizing: border-box;
-  border-radius: 5px;
-  width: 250px;
+    border: none;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+        rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    font-size: 20px;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    width: 250px;
 }
 
 .scard {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
-    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: rgb(56, 56, 56);
-  background: linear-gradient(
-    43deg,
-    rgba(56, 56, 56, 1) 0%,
-    rgba(43, 43, 43, 1) 100%
-  );
-  margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+        rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgb(56, 56, 56);
+    background: linear-gradient(43deg,
+            rgba(56, 56, 56, 1) 0%,
+            rgba(43, 43, 43, 1) 100%);
+    margin-bottom: 10px;
 }
 
 input[type="checkbox"] {
-  height: 30px;
-  width: 30px;
+    height: 30px;
+    width: 30px;
 }
 
 .scard h4 {
-  color: white;
+    color: white;
 }
 
 .size {
-  background: rgb(56, 56, 56);
-  background: linear-gradient(
-    43deg,
-    rgba(56, 56, 56, 1) 0%,
-    rgba(43, 43, 43, 1) 100%
-  );
-  color: white;
-  margin-right: 10px;
-  border-radius: 5px;
-  box-sizing: border-box;
-  font-size: 12px;
-  padding: 5px;
+    background: rgb(56, 56, 56);
+    background: linear-gradient(43deg,
+            rgba(56, 56, 56, 1) 0%,
+            rgba(43, 43, 43, 1) 100%);
+    color: white;
+    margin-right: 10px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 12px;
+    padding: 5px;
 }
 
 .fcenter {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
+
 .search input {
-  border: none;
-  padding: 10px;
-  padding-left: 35px;
-  font-size: 18px;
-  width: 250px;
+    border: none;
+    padding: 10px;
+    padding-left: 35px;
+    font-size: 18px;
+    width: 250px;
 }
 
 .search input:focus {
-  outline: none;
+    outline: none;
 }
 
 .search iconify-icon {
-  font-size: 20px;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 10px;
-  width: 20px;
+    font-size: 20px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 10px;
+    width: 20px;
 }
 
 .p10 {
-  box-sizing: border-box;
-  padding: 10px;
+    box-sizing: border-box;
+    padding: 10px;
 }
 
 #kindle {
-  position: fixed;
-  right: 10px;
-  bottom: 10px;
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  border-radius: 5px;
-  box-sizing: border-box;
-  padding: 10px;
-  background: rgb(233, 59, 59);
-  background: linear-gradient(
-    135deg,
-    rgba(233, 59, 59, 1) 0%,
-    rgba(232, 134, 134, 1) 100%
-  );
-  z-index: 100;
-  cursor: pointer;
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    padding: 10px;
+    background: rgb(233, 59, 59);
+    background: linear-gradient(135deg,
+            rgba(233, 59, 59, 1) 0%,
+            rgba(232, 134, 134, 1) 100%);
+    z-index: 100;
+    cursor: pointer;
 }
 
 #kindle p {
-  color: white;
-  text-shadow: 0px 0px 11px rgba(0, 0, 0, 0.36);
+    color: white;
+    text-shadow: 0px 0px 11px rgba(0, 0, 0, 0.36);
 }
 
 #kindle .flex {
-  align-items: center;
+    align-items: center;
 }
 
 #kindle iconify-icon {
-  font-size: 25px;
+    font-size: 25px;
 }
 
 #kindle.success {
-  background: rgb(38, 156, 71);
-  background: linear-gradient(
-    121deg,
-    rgba(38, 156, 71, 1) 0%,
-    rgba(99, 171, 99, 1) 100%
-  );
+    background: rgb(38, 156, 71);
+    background: linear-gradient(121deg,
+            rgba(38, 156, 71, 1) 0%,
+            rgba(99, 171, 99, 1) 100%);
 }
 
 #search_results {
-  display: flex;
-  flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .mangaInfo {
-  width: 100%;
-  position: absolute;
-  top: 50px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-  box-sizing: border-box;
-  padding-top: 25px;
-  display: flex;
-  justify-content: space-between;
+    width: 100%;
+    position: absolute;
+    top: 50px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    box-sizing: border-box;
+    padding-top: 25px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .mangaInfo .poster {
-  width: 300px;
-  text-align: center;
-  overflow: hidden;
-  text-overflow: clip;
+    width: 300px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: clip;
 }
 
 .mangaInfo .poster img {
-  width: 200px;
-  border-radius: 5px;
+    width: 200px;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+        rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
 }
 
 .mangaInfo .chapters {
-  width: calc(100% - 300px);
-  height: 100%;
-  overflow-y: auto;
-  padding: 10px;
-  box-sizing: border-box;
+    width: calc(100% - 300px);
+    height: 100%;
+    overflow-y: auto;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 .mangaInfo .chapter {
-  position: relative;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid rgb(231, 222, 222);
-  transition: background-color 0.2s;
-  border-radius: 5px;
-  padding: 5px;
-  box-sizing: border-box;
-  margin: 1px;
-  overflow: hidden;
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgb(231, 222, 222);
+    transition: background-color 0.2s;
+    border-radius: 5px;
+    padding: 5px;
+    box-sizing: border-box;
+    margin: 1px;
+    overflow: hidden;
 }
+
 .mangaInfo .chapter:hover {
-  background-color: rgb(224, 224, 224);
+    background-color: rgb(224, 224, 224);
 }
 
 .mangaInfo .chapter iconify-icon {
-  font-size: 25px;
-  cursor: pointer;
-  z-index: 10;
+    font-size: 25px;
+    cursor: pointer;
+    z-index: 10;
 }
 
 .chapter .title,
 .chapter .num {
-  z-index: 10;
+    z-index: 10;
 }
 
 .chapter .num {
-  width: 50px;
+    width: 50px;
 }
 
 .chapter.downloaded {
-  background: rgb(83, 255, 132);
-  background: linear-gradient(
-    29deg,
-    rgba(83, 255, 132, 1) 0%,
-    rgba(205, 255, 205, 1) 100%
-  );
+    background: rgb(83, 255, 132);
+    background: linear-gradient(29deg,
+            rgba(83, 255, 132, 1) 0%,
+            rgba(205, 255, 205, 1) 100%);
 }
 
 .chapter .progress {
-  z-index: 9;
-  position: absolute;
-  width: 0%;
-  height: 100%;
-  left: 0px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgb(83, 255, 239);
-  background: linear-gradient(
-    29deg,
-    rgba(83, 255, 239, 0.5242471988795518) 0%,
-    rgba(205, 255, 250, 0.5018382352941176) 100%
-  );
-  transition: width 0.1s;
+    z-index: 9;
+    position: absolute;
+    width: 0%;
+    height: 100%;
+    left: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgb(83, 255, 239);
+    background: linear-gradient(29deg,
+            rgba(83, 255, 239, 0.5242471988795518) 0%,
+            rgba(205, 255, 250, 0.5018382352941176) 100%);
+    transition: width 0.1s;
 }
 
 .login {
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-  background-color: white;
-  text-align: center;
-  z-index: 10000;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background-color: white;
+    text-align: center;
+    z-index: 10000;
 }
 
 .login input {
-  font-size: 20px;
-  border: 1px solid rgb(235, 229, 229);
-  border-radius: 5px;
-  box-sizing: border-box;
-  padding: 10px;
-  margin: 5px;
+    font-size: 20px;
+    border: 1px solid rgb(235, 229, 229);
+    border-radius: 5px;
+    box-sizing: border-box;
+    padding: 10px;
+    margin: 5px;
 }
 
 .login input:focus {
-  outline: none;
+    outline: none;
 }
 
 .secondary {
-  padding-left: 5px;
-  color: rgb(172, 165, 165);
+    padding-left: 5px;
+    color: rgb(172, 165, 165);
 }
 
 /* CSS */
 button {
-  appearance: button;
-  backface-visibility: hidden;
-  background-color: #405cf5;
-  border-radius: 6px;
-  border-width: 0;
-  box-shadow: rgba(50, 50, 93, 0.1) 0 0 0 1px inset,
-    rgba(50, 50, 93, 0.1) 0 2px 5px 0, rgba(0, 0, 0, 0.07) 0 1px 1px 0;
-  box-sizing: border-box;
-  color: #fff;
-  cursor: pointer;
-  font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue",
-    Ubuntu, sans-serif;
-  font-size: 100%;
-  height: 44px;
-  line-height: 1.15;
-  margin: 12px 0 0;
-  outline: none;
-  overflow: hidden;
-  padding: 0 25px;
-  position: relative;
-  text-align: center;
-  text-transform: none;
-  transform: translateZ(0);
-  transition: all 0.2s, box-shadow 0.08s ease-in;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
+    appearance: button;
+    backface-visibility: hidden;
+    background-color: #405cf5;
+    border-radius: 6px;
+    border-width: 0;
+    box-shadow: rgba(50, 50, 93, 0.1) 0 0 0 1px inset,
+        rgba(50, 50, 93, 0.1) 0 2px 5px 0, rgba(0, 0, 0, 0.07) 0 1px 1px 0;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue",
+        Ubuntu, sans-serif;
+    font-size: 100%;
+    height: 44px;
+    line-height: 1.15;
+    margin: 12px 0 0;
+    outline: none;
+    overflow: hidden;
+    padding: 0 25px;
+    position: relative;
+    text-align: center;
+    text-transform: none;
+    transform: translateZ(0);
+    transition: all 0.2s, box-shadow 0.08s ease-in;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
 }
 
 button:disabled {
-  cursor: default;
+    cursor: default;
 }
 
 button:focus {
-  box-shadow: rgba(50, 50, 93, 0.1) 0 0 0 1px inset,
-    rgba(50, 50, 93, 0.2) 0 6px 15px 0, rgba(0, 0, 0, 0.1) 0 2px 2px 0,
-    rgba(50, 151, 211, 0.3) 0 0 0 4px;
+    box-shadow: rgba(50, 50, 93, 0.1) 0 0 0 1px inset,
+        rgba(50, 50, 93, 0.2) 0 6px 15px 0, rgba(0, 0, 0, 0.1) 0 2px 2px 0,
+        rgba(50, 151, 211, 0.3) 0 0 0 4px;
 }
 
 #fav {
-  font-size: 40px;
-  cursor: pointer;
+    font-size: 40px;
+    cursor: pointer;
 }
 
 #loading {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 60px;
-  background-color: white;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    background-color: white;
 }
 
 .ylb {
-  display: flex;
-  flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
 }

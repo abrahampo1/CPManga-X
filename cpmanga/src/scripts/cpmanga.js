@@ -6,16 +6,7 @@ const { ipcRenderer } = require("electron");
 
 let download_query = {};
 
-async function download_chapter(
-  manga,
-  chapter,
-  holder,
-  alt_title,
-  custom_page = 0,
-  custom_chapter = false,
-  execute_command = false,
-  custom_number = false
-) {
+async function download_chapter(manga, chapter, holder) {
   //Search if kindle is connected
   let kindle_path = await search_kindle();
 
@@ -54,22 +45,25 @@ async function download_chapter(
   //Set custom variables
 
   mangaid = manga.id;
-  chapterid = custom_chapter || chapter.id;
-  chapternumber = custom_number || chapter.chapter;
+  chapterid = chapter.id;
+  chapternumber = chapter.chapter;
 
   //Set manga Path to be downloaded
   let home = require("os").homedir();
   let manga_path =
     home + "/Documents/cpmanga/manga/" + mangaid + "/" + chapterid;
 
-  //Set te manga title (used to dive the name on kindle)
-  alt_title = manga.localizedTitle.localString;
+  //Set te manga title (used to give the name on kindle)
   folder(manga_path);
 
   //Iterate and download the chapter pages
   let pages = await chapter.getReadablePages();
   for (let index = 0; index < pages.length; index++) {
-    const file_name = manga_path + "/" + (index + custom_page) + ".png";
+    let page_name = index;
+    if (index < 10) {
+      page_name = "0" + index;
+    }
+    const file_name = manga_path + "/" + page_name + ".png";
 
     //Check if image already exist, if not, download it (this will make the downloads really faster with cached images)
     if (!fs.existsSync(file_name)) {
@@ -91,57 +85,13 @@ async function download_chapter(
   }
   localStorage.setItem("downloaded", JSON.stringify(downloaded));
 
-  //If not executing the comic converter command, just finish
-  if (!execute_command) {
-    holder.classList.add("downloaded");
-    $(icon).attr("icon", "ic:outline-download-done");
-    $(progress).fadeOut("fast");
-    return pages.length;
-  }
-
-  $(icon).attr("icon", "line-md:download-outline-loop");
-  progress.style.width = "20%";
-  //Send the command to kindle comic converter exe
-  let kcc = exec.exec(
-    '"./mobi/kcc-c2e" -p KPW "' +
-      manga_path +
-      '" -t "' +
-      alt_title +
-      ` ${chapternumber}"`
-  );
-
-  kcc.stdout.on("data", function (data) {
-    console.log(data.toString());
-  });
-  // what to do with data coming from the standard error
-  kcc.stderr.on("data", function (data) {
-    console.log(data.toString());
-    return false;
-  });
-  // what to do when the command is done
-  kcc.on("exit", function (code) {
-    progress.style.width = "50%";
-    if (kindle_path) {
-      folder(path.join(kindle_path, "/documents/cpmanga/" + manga.id));
-      fs.copyFileSync(
-        manga_path + ".mobi",
-        path.join(
-          kindle_path,
-          "/documents/cpmanga/" + manga.id + `/${chapternumber}.mobi`
-        )
-      );
-      progress.style.width = "70%";
-      fs.rmSync(manga_path + ".mobi", { recursive: true, force: true });
-    }
-
-    progress.style.width = "100%";
-    console.log("All done!");
-    holder.classList.add("downloaded");
-    $(icon).attr("icon", "ic:outline-download-done");
-    $(progress).fadeOut("fast");
-    $(gicon).show();
-    $(dicon).show();
-  });
+  //just finish
+  holder.classList.add("downloaded");
+  $(icon).attr("icon", "ic:outline-download-done");
+  $(progress).fadeOut("fast");
+  $(gicon).show();
+  $(dicon).show();
+  return manga_path;
 }
 
 function downloadImage(url, filepath, chapterid) {
@@ -153,6 +103,85 @@ function downloadImage(url, filepath, chapterid) {
       url: url,
       filepath: filepath,
       returnId: chapterid,
+    });
+  });
+}
+
+async function generate_mobi(
+  folders = [],
+  manga = "",
+  title = "",
+  chapters = ""
+) {
+  return new Promise((resolve, reject) => {
+    //Temporary folder
+    let home = require("os").homedir();
+    const tempmangas = home + "/Documents/cpmanga/manga/tempmangas";
+
+    //Check if temporary folder exists
+    if (fs.existsSync(tempmangas)) {
+      //Delete temporary folder content
+      console.log("Deleting Temporary Files");
+      fs.rmdirSync(tempmangas, {
+        recursive: true,
+        force: true,
+      });
+      console.log("Deleted!");
+    }
+
+    //Recreate the folder
+    console.log("Recreating temporary folder...");
+    fs.mkdirSync(tempmangas);
+    console.log("Recreated on " + path.join(__dirname, "tempmangas"));
+
+    //Set the currentpage var to 0
+    let current_page = 0;
+
+    //Iterate through manga images on each chapter
+    for (let index = 0; index < folders.length; index++) {
+      const current_folder = folders[index];
+      let contents = fs.readdirSync(current_folder);
+      console.log("Copying contents to temporary folder");
+      for (let p = 0; p < contents.length; p++) {
+        console.log(
+          `${p + 1} / ${contents.length} // (${index + 1}/${folders.length})`
+        );
+        const page = contents[p];
+        let page_name = current_page;
+        if (current_page < 10) {
+          page_name = "0" + current_page;
+        }
+        fs.copyFileSync(
+          path.join(current_folder, page),
+          path.join(tempmangas, page_name + ".png")
+        );
+        current_page++;
+      }
+    }
+
+    //Send command to KCC
+    console.log("Executing KCC...");
+    let kcc = exec.exec(
+      '"./mobi/kcc-c2e" -p KPW "' +
+        tempmangas +
+        '" -t "' +
+        title +
+        ` ${chapters}"`
+    );
+
+    kcc.stdout.on("data", function () {
+      console.log("KCC Done!");
+    });
+
+    kcc.on("exit", function () {
+      //If the MOBI exists, just give it
+      if (fs.existsSync(tempmangas + ".mobi")) {
+        console.log("Mobi on:", tempmangas + ".mobi");
+        resolve(tempmangas + ".mobi");
+      } else {
+        console.error("Couldn't find the generated mobi");
+        reject(false);
+      }
     });
   });
 }
