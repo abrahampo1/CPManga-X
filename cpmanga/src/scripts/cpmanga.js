@@ -1,21 +1,12 @@
 const fs = require("fs");
 const exec = require("child_process");
-const path = require("path");
+var path = require("path");
 
 const { ipcRenderer } = require("electron");
 
 let download_query = {};
 
 async function download_chapter(manga, chapter, holder) {
-  //Search if kindle is connected
-  let kindle_path = await search_kindle();
-
-  //To-do download without kindle, meanwhile give an alert message
-  if (!kindle_path) {
-    alert("Please connect the kindle to auto pass the generated file");
-    //return false;
-  }
-
   //Verify that the chapter is on query
   if (download_query[chapter]) {
     return false;
@@ -94,6 +85,19 @@ async function download_chapter(manga, chapter, holder) {
   return manga_path;
 }
 
+async function pass_to_kindle(mobifile, mangaid, default_path = "") {
+  let kindle_path = await search_kindle();
+  if (!kindle_path) {
+    alert("INSERT THE AMAZON KINDLE IN ORDER TO SEND THE MANGA");
+  }
+
+  fs.copyFileSync(
+    mobifile,
+    path.join(kindle_path, default_path + "/" + mangaid)
+  );
+  return true;
+}
+
 function downloadImage(url, filepath, chapterid) {
   return new Promise((resolve, reject) => {
     ipcRenderer.once(chapterid, (path) => {
@@ -107,13 +111,16 @@ function downloadImage(url, filepath, chapterid) {
   });
 }
 
-async function generate_mobi(
-  folders = [],
-  manga = "",
-  title = "",
-  chapters = ""
-) {
+async function generate_mobi(folders = [], title = "", chapters = "", holder) {
   return new Promise((resolve, reject) => {
+    //Get HTML elements
+    let progress = holder.querySelector(".progress");
+    holder.classList.remove("downloaded");
+    progress.style.width = "0%";
+    $(progress).show();
+
+    $(holder).attr("icon", "line-md:uploading-loop");
+
     //Temporary folder
     let home = require("os").homedir();
     const tempmangas = home + "/Documents/cpmanga/manga/tempmangas";
@@ -129,6 +136,8 @@ async function generate_mobi(
       console.log("Deleted!");
     }
 
+    progress.style.width = "10%";
+
     //Recreate the folder
     console.log("Recreating temporary folder...");
     fs.mkdirSync(tempmangas);
@@ -142,10 +151,11 @@ async function generate_mobi(
       const current_folder = folders[index];
       let contents = fs.readdirSync(current_folder);
       console.log("Copying contents to temporary folder");
+      let percent = (index + 1) / folders.length;
       for (let p = 0; p < contents.length; p++) {
-        console.log(
-          `${p + 1} / ${contents.length} // (${index + 1}/${folders.length})`
-        );
+        let chapter_percent = percent * contents.length + 10;
+        progress.style.width = chapter_percent + "%";
+
         const page = contents[p];
         let page_name = current_page;
         if (current_page < 10) {
@@ -158,6 +168,7 @@ async function generate_mobi(
         current_page++;
       }
     }
+    progress.style.width = "50%";
 
     //Send command to KCC
     console.log("Executing KCC...");
@@ -171,15 +182,22 @@ async function generate_mobi(
 
     kcc.stdout.on("data", function () {
       console.log("KCC Done!");
+      progress.style.width = "70%";
     });
 
     kcc.on("exit", function () {
       //If the MOBI exists, just give it
       if (fs.existsSync(tempmangas + ".mobi")) {
+        progress.style.width = "90%";
         console.log("Mobi on:", tempmangas + ".mobi");
+        progress.style.width = "100%";
+        $(progress).hide();
+        $(holder).attr("icon", "mdi:file-send-outline");
+        holder.classList.add("downloaded");
         resolve(tempmangas + ".mobi");
       } else {
         console.error("Couldn't find the generated mobi");
+        $(holder).attr("icon", "material-symbols:error-rounded");
         reject(false);
       }
     });
@@ -218,18 +236,11 @@ function group_add(mangaid, chapterid, chapternum, element) {
   }
 }
 
-async function group_download(mangaid) {
+async function group_download(mangaid, send_to_kindle = true) {
   let group_array = group_query[mangaid];
   let chapter_numbers = Object.values(group_array);
   group_array = Object.keys(group_array);
 
-  let custom_chapter =
-    mangaid +
-    "-" +
-    chapter_numbers[0].chapter +
-    "-" +
-    chapter_numbers[chapter_numbers.length - 1].chapter;
-  let custom_page = 0;
   chapter_numbers.forEach((element) => {
     $(element.check).hide();
     let icon = element.element.querySelector("#download");
@@ -237,50 +248,43 @@ async function group_download(mangaid) {
   });
   if (group_array.length > 0) {
     $("#g_download").prop("disabled", true);
+    let donwloading_array = [];
     let downloaded = 0;
     for (let index = 0; index < group_array.length; index++) {
+      let home = require("os").homedir();
+
       const chapter = group_array[index];
-      let pages = await MFA.Chapter.get(chapter);
-      pages = pages.pages;
       const element = chapter_numbers[index].element;
-      if (index != group_array.length - 1) {
-        download_chapter(
-          mangaid,
-          chapter,
-          element,
-          custom_chapter,
-          custom_page,
-          custom_chapter,
-          false,
-          chapter_numbers[0].chapter +
-            "-" +
-            chapter_numbers[chapter_numbers.length - 1].chapter
-        ).then(async () => {
-          downloaded++;
-          if (downloaded == chapter_numbers.length - 1) {
-            const chapter = group_array[chapter_numbers.length - 1];
-            pages = await MFA.Chapter.get(chapter);
-            pages = pages.pages;
-            const element = chapter_numbers[chapter_numbers.length - 1].element;
-            console.log("Begin the kindle pass download");
-            download_chapter(
-              mangaid,
-              chapter,
-              element,
-              custom_chapter,
-              custom_page,
-              custom_chapter,
-              true,
-              chapter_numbers[0].chapter +
-                "-" +
-                chapter_numbers[chapter_numbers.length - 1].chapter
-            );
+      let manga_path =
+        home + "/Documents/cpmanga/manga/" + mangaid + "/" + chapter;
+      donwloading_array.push(manga_path);
+      download_chapter(mangaid, chapter, element).then(async () => {
+        downloaded++;
+        if (send_to_kindle && downloaded == group_array.length) {
+          //Search if kindle is connected
+          let kindle_path = await search_kindle();
+
+          //To-do download without kindle, meanwhile give an alert message
+          if (!kindle_path) {
+            alert("Please connect the kindle to auto pass the manga");
+            return false;
           }
-        });
-      }
-      custom_page += pages;
-      console.log(custom_page);
+          $(icon).attr("icon", "line-md:uploading-loop");
+          let manga = await MFA.Manga.get(mangaid);
+          let mobi = await generate_mobi(
+            donwloading_array,
+            manga.localizedTitle.localString,
+            chapter_numbers[0].chapter +
+              "-" +
+              chapter_numbers[chapter_numbers.length - 1].chapter,
+            chapter_numbers[chapter_numbers.length - 1].element
+          );
+          await pass_to_kindle(mobi, mangaid);
+          $(icon).attr("icon", "line-md:clipboard-check");
+        }
+      });
     }
+    $(".gicon").attr("icon", "material-symbols:check-box-outline-blank");
     group_query = {};
   }
 }

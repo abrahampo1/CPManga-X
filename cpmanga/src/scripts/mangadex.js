@@ -1,6 +1,7 @@
 const MFA = require("mangadex-full-api");
 const fastFolderSizeSync = require("fast-folder-size/sync");
 const { fstat } = require("fs");
+var path = require("path");
 const mfa_user = localStorage.getItem("mangadex-user");
 const mfa_pass = localStorage.getItem("mangadex-password");
 
@@ -109,11 +110,11 @@ async function load_manga(id) {
       if (liked[curr_manga.id]) {
         delete liked[curr_manga.id];
         localStorage.setItem("liked", JSON.stringify(liked));
-        $("#fav iconify-icon").attr("icon", "ic:outline-star-border");
+        $("#fav").attr("icon", "ic:outline-star-border");
       } else {
         liked[curr_manga.id] = curr_manga;
         localStorage.setItem("liked", JSON.stringify(liked));
-        $("#fav iconify-icon").attr("icon", "ic:outline-star");
+        $("#fav").attr("icon", "ic:outline-star");
       }
     });
     let manga = await MFA.Manga.get(id, true);
@@ -139,9 +140,7 @@ async function load_manga(id) {
     });
 
     let liked = JSON.parse(localStorage.getItem("liked")) || {};
-    console.log(liked);
     if (liked[curr_manga.id]) {
-      console.log("ic:outline-star");
       $("#fav iconify-icon").attr("icon", "ic:outline-star");
     } else {
       $("#fav iconify-icon").attr("icon", "ic:outline-star-border");
@@ -152,16 +151,13 @@ async function load_manga(id) {
 
     $(".mangaInfo h3").text(manga.localizedTitle.localString);
     let author = await manga.authors[0].resolve();
-    console.log(author);
     $(".mangaInfo p").text(author.name);
-    console.log(chapters);
     let manga_resume = {};
     for (let index = 0; index < chapters.length; index++) {
       const chapter = chapters[index];
       let cl = "";
       let group = "";
       if (chapter.groups[0]) {
-        console.log();
         group = await chapter.groups[0].resolve();
         chapter.groupname = group.name;
       }
@@ -172,7 +168,6 @@ async function load_manga(id) {
 
       manga_resume[chapter.chapter].push(chapter);
     }
-    console.log(manga_resume);
 
     Object.entries(manga_resume).forEach(async ([key, value]) => {
       let chapter_holder = $(
@@ -185,23 +180,25 @@ async function load_manga(id) {
         let cl = "";
         let size = "";
         let kindle_icon = "";
+        let download_icon = "subway:cloud-download";
         if (downloaded[manga.id] && downloaded[manga.id][chapter.id]) {
-          cl = "downloaded";
           let home = require("os").homedir();
           let manga_path =
             home + "/Documents/cpmanga/manga/" + manga.id + "/" + chapter.id;
           if (fs.existsSync(manga_path)) {
+            cl = "downloaded";
+            download_icon = "subway:cloud-reload";
             size = fastFolderSizeSync(manga_path);
             size = `<div class="size">${(size / 1000 / 1000).toFixed(
               2
             )} MB</div>`;
+            manga_path = manga_path.replace(/\\/g, "/");
+            kindle_icon = `
+            
+            <iconify-icon onclick="generate_mobi(['${manga_path}'], '${manga.localizedTitle.localString}', '${chapter.chapter}', this)" icon="mdi:file-send-outline"></iconify-icon>
+            
+            `;
           }
-
-          kindle_icon = `
-          
-          <iconify-icon icon="mdi:file-send-outline"></iconify-icon>
-          
-          `;
         }
         $(chapter_holder).append(`
         <div class="chapter ${cl}">
@@ -216,7 +213,7 @@ async function load_manga(id) {
            icon="material-symbols:check-box-outline-blank"
          ></iconify-icon>
          <iconify-icon id="download" onclick="download_chapter('${manga.id}', '${chapter.id}', this.parentNode.parentNode)"
-         icon="material-symbols:download-sharp"
+         icon="${download_icon}"
        ></iconify-icon>
        ${kindle_icon}
 
